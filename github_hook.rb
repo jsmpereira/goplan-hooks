@@ -15,9 +15,7 @@ require 'rubygems'
 require 'oauth'
 require 'sinatra'
 require 'json'
-require 'rest_client'
 require 'yaml'
-require 'pp'
 
 # load up configuration from YAML file
 configure do
@@ -43,35 +41,26 @@ end
 post '/' do
 
   push = JSON.parse(params[:payload])
+    
+  message = push['commits'][0]['message']
   
-  pp push
+  commit_url = push['commits'][0]['url']
   
-  #push['commits'].each { |commit| process_commit(commit) }
+  ticket_to_close = message.scan(%r{Closes #+[0-9]+})
   
-  process_commit(push['commits'][0])
+  ticket_id = ticket_to_close.to_s.split("#")[1]
+  
+  ticket_response = options.access_token.get("/weebiz/api/tickets/get/#{ticket_id}.json")
+  ticket = JSON.parse(ticket_response.body)
+  
+  close_ticket = options.access_token.put("/weebiz/api/tickets/update/#{ticket_id}.json", {'ticket[status]' => 2})
+  
+  comment_text = "Closed.\n\n #{commit_url}"
+  	
+  close_comment = options.access_token.put("/weebiz/api/comments/create", {:format => 'json', 'comment[commentable_type]' => 'ticket', 'comment[commentable_cid]' => ticket_id, 'comment[text]' => "#{comment_text}"})
+
 end
 
 get '/' do
     "Have your github webhook point here; bridge works automatically via POST"
-end
-
-  
-helpers do
-  def process_commit(commit)
-    # get commit message
-    message = commit['message']
-    
-    message.scan(%r{Closes #+[0-9]+}) do |ticket_to_close|
-      
-      ticket_id = ticket_to_close.to_s.split("#")[1]
-      
-      ticket_response = options.access_token.get("/weebiz/api/tickets/get/30.json")
-      pp ticket = JSON.parse(ticket_response.body)
-
-      put_response = options.access_token.put("/weebiz/api/tickets/update/30.json", {:cid => ticket[:cid], :status => 2})
-      
-      pp "============ PUT RESPONSE"
-      pp JSON.parse(put_response.body)
-    end
-  end
 end

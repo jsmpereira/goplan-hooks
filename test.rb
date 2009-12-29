@@ -27,7 +27,7 @@ payload={
         "email": "chris@cobaltedge.com",
         "name": "Chris Bailey" 
       },
-      "message": "This one is a comment only 10 [Story294825] and [Story1234] 2nd line commit",
+      "message": "This one is a comment only 10 [Closes #30] and [Story1234] 2nd line commit",
       "timestamp": "2008-02-15T14:57:17-08:00",
       "added": ["filepath.rb"]
     },
@@ -61,7 +61,7 @@ eos
 headers = { 'Content-Type' => 'application/x-www-form-urlencoded' }
 
 http = Net::HTTP.new('localhost', 4567)
-resp, data = http.get('/', headers)
+resp, data = http.post('/', payload, headers)
 
 puts "Response code: #{resp.code}"
 puts "Response body: #{data}"
