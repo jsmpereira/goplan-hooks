@@ -67,7 +67,7 @@ helpers do
       put_response = options.access_token.put("/weebiz/api/tickets/update/30", {:cid => ticket[:cid], :status => 2})
       
       pp "============ PUT RESPONSE"
-      pp put_response
+      pp put_response.body
 
     end
 
