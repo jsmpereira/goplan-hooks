@@ -45,7 +45,7 @@ post '/' do
   push = JSON.parse(params[:payload])
   push['commits'].each { |commit| process_commit(commit) }
   
-  "I got some JSON: #{push.inspect}"  
+  pp push.inspect
 end
 
 get '/' do
