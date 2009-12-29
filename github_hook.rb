@@ -65,7 +65,10 @@ helpers do
       ticket_response = options.access_token.get("/weebiz/api/tickets/get/30.json")
       pp ticket = JSON.parse(ticket_response.body)
 
-      options.access_token.put("/weebiz/api/tickets/update/30", {:cid => ticket[:cid], :status => 2})
+      put_response = options.access_token.put("/weebiz/api/tickets/update/30", {:cid => ticket[:cid], :status => 2})
+      
+      pp "============ PUT RESPONSE"
+      pp put_response
 
     end
 
