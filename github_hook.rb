@@ -43,6 +43,9 @@ end
 post '/' do
 
   push = JSON.parse(params[:payload])
+  
+  pp push
+  
   push['commits'].each { |commit| process_commit(commit) }
   
 end
@@ -64,12 +67,10 @@ helpers do
       ticket_response = options.access_token.get("/weebiz/api/tickets/get/30.json")
       pp ticket = JSON.parse(ticket_response.body)
 
-      put_response = options.access_token.put("/weebiz/api/tickets/update/30", {:cid => ticket[:cid], :status => 2})
+      put_response = options.access_token.put("/weebiz/api/tickets/update/30.json", {:cid => ticket[:cid], :status => 2})
       
       pp "============ PUT RESPONSE"
-      pp put_response.body
-
+      pp JSON.parse(put_response.body)
     end
-
   end
 end
