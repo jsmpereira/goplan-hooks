@@ -46,8 +46,9 @@ post '/' do
   
   pp push
   
-  push['commits'].each { |commit| process_commit(commit) }
+  #push['commits'].each { |commit| process_commit(commit) }
   
+  process_commit(push['commits'][0])
 end
 
 get '/' do
