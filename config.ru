@@ -1,4 +1,4 @@
-require 'tracker_github_hook'
+require 'github_hook'
  
 ## There is no need to set directories here anymore;
 ## Just run the application

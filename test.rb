@@ -61,7 +61,7 @@ eos
 headers = { 'Content-Type' => 'application/x-www-form-urlencoded' }
 
 http = Net::HTTP.new('localhost', 4567)
-resp, data = http.post('/', payload, headers)
+resp, data = http.get('/', headers)
 
 puts "Response code: #{resp.code}"
 puts "Response body: #{data}"
