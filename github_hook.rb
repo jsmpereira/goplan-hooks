@@ -51,7 +51,6 @@ post '/' do
   ticket_id = ticket_to_close.to_s.split("#")[1]
   
   ticket_response = options.access_token.get("/weebiz/api/tickets/get/#{ticket_id}.json")
-  ticket = JSON.parse(ticket_response.body)
   
   close_ticket = options.access_token.put("/weebiz/api/tickets/update/#{ticket_id}.json", {'ticket[status]' => 2})
   

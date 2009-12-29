@@ -1,5 +1,5 @@
 #!/usr/bin/ruby
-# Test our Sinatra Tracker Post-receive hook
+# Test our Sinatra Post-receive hook
 #
 require 'net/http'
 require 'rubygems'

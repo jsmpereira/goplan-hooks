@@ -1,77 +1,35 @@
-This app is a small server to serve as a GitHub Post-Receive hook to add 
-comments, and update state in Pivotal Tracker, similar to say the Lighthouse
-service integration.
+This app is a small server to serve as a GitHub Post-Receive hook to close tickets 
+in GoPlan.
 
-Also, many thanks to Alan Pinstein (apinstein) for his many contributions.
+You need a goplan.yml file with your credentials. Looks like this:
 
-Configure your Tracker API key, and Project ID in a config.yml file placed in 
-the same directory as this app.  It should look something like:
+--- 
+:company_alias:
+:consumer_key:
+:consumer_secret:
+:access_token:
+:access_token_secret:
 
-tracker_github_hook:
-  github_url: 'http://github.com/chris/tracker_github_hook'
-  tracker_api_token: a1230e72340e3babc96d5e2fab67c18d
-  tracker_project_id: 123
-  ref: refs/heads/master
-  user_api_tokens:
-    chris:
-      email: chris@cobaltedge.com
-      tracker_api_token: a1b2c3d4e5f67890
-    alan:
-      email: alan@example.com
-      tracker_api_token: 0987654321abcdef
-  
-  
-The label ('tracker_github_hook' in this case) is arbitrary and not used, it's
-just their to be a useful bit of info to humans/organize the nested settings, 
-and is not used.  This setup allows you to have one service that supports
-multiple Tracker/GitHub projects, just define one of the above blocks for each
-one, and then anytime GitHub sends a push, the service will tease out which
-GitHub repo it came from and correlate that to which Tracker project you've
-assigned to that.
+You can run goplan-auth to handle OAuth for you and create and populate this file.
 
-The "ref" field is also optional; it will tell the hook to ignore commits on
-any branches other than the one listed. This is useful to prevent duplication
-of comments being pushed into Tracker if you have multiple remote branches.
+This very simple hook looks for a pattern in commit messages:
 
-The "user_api_tokens" is optional - the primary "tracker_api_token" will be used
-by default.  But, if you do supply this block, then the hook will correlate the
-email address of the author of the GitHub commit, to that within this list, and
-if it finds a match, will use the specified Tracker API token.  This makes it so
-that the comment in your Tracker story shows up as being made by the same person
-making the GitHub commit (instead of whoever owns the default API token).
+		[Closes #ticket_number]
 
-When you make commits to Git/GitHub, and want a comment and optionally a state 
-update made to a story in Tracker, add the following text to your commit 
-message:
-    
-    [Story#####]
-    
-or
+Current behavior closes the referred ticket and adds a comment like so:
 
-    [Story##### state:finished]
+		Closed.
+		
+		http://github.com/defunkt/github/commit/41a212ee83ca127e3c8cf465891ab7216a705f59
 
-where ##### is the story number (see the bottom of an expanded story in 
-Tracker for its ID).
-
-A commit message can have more than one [Story####] block, but the entire 
-commit message will be added to both stories. The duplication is unfortunate
-but better than the alternative of ignoring additional story references
-altogether.
 
 This project also requires the following rubygems:
 - sinatra
-- rest-client
+- oauth
 - json
 
 
-More information for, and thanks to:
-
-Pivotal Tracker API: http://www.pivotaltracker.com/help/api
-GitHub Post-Receive Hooks: http://github.com/guides/post-receive-hooks
-Sinatra: http://sinatra.rubyforge.org/
-RestClient: http://rubyforge.org/projects/rest-client/
-
-
 TODO:
-- cleanup, better testing
-- support other story changes, like assigned user, etc.
+- refactor code so doesn't look like a hack
+- cleanup, tests
+- make use of goplan gem (when available) to extend functionality
