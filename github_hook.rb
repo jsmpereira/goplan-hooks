@@ -42,6 +42,7 @@ end
 # The handler for the GitHub post-receive hook
 post '/' do
 
+  push = JSON.parse(params[:payload])
   push['commits'].each { |commit| process_commit(commit) }
   
 end
