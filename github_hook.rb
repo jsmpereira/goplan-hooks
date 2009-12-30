@@ -5,7 +5,6 @@ require 'json'
 
 configure do
   begin
-    set :environment, :development
     config = YAML.load_file(File.join(File.dirname(__FILE__), 'config', 'goplan.yml'))
     
     CONSUMER_KEY = config[:consumer_key]
@@ -26,15 +25,11 @@ end
 module GoPlan
   def service(name)
     Timeout.timeout(20) do
-      post "/*/#{name}/" do
+      post "/*/#{name}" do
         payload = JSON.parse(params[:payload])
         project_alias = params['splat'][0]
         yield payload, project_alias
         halt
-      end
-      
-      get "/*/#{name}/" do
-        "hello"
       end
     end
   rescue Timeout::Error
