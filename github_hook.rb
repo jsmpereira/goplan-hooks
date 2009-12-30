@@ -2,7 +2,6 @@ require 'rubygems'
 require 'oauth'
 require 'sinatra'
 require 'json'
-require 'pp'
 
 configure do
   begin
