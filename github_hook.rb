@@ -32,6 +32,10 @@ module GoPlan
         yield payload, project_alias
         halt
       end
+      
+      get "/*/#{name}/" do
+        "hello"
+      end
     end
   rescue Timeout::Error
   end
