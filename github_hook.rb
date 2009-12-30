@@ -5,6 +5,7 @@ require 'json'
 
 configure do
   begin
+    set :environment, :development
     config = YAML.load_file(File.join(File.dirname(__FILE__), 'config', 'goplan.yml'))
     
     CONSUMER_KEY = config[:consumer_key]
