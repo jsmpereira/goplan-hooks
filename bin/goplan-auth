@@ -1,0 +1,48 @@
+#!/usr/bin/env ruby
+
+require 'rubygems'
+require 'oauth/consumer'
+require 'yaml'
+
+puts "Please enter your consumer key, then hit Return."
+consumer_key = gets.chomp
+puts "Please enter your consumer secret, then hit Return."
+consumer_secret = gets.chomp
+puts "Please enter your company alias, then hit Return."
+company_alias = gets.chomp
+ 
+begin
+  consumer = OAuth::Consumer.new consumer_key, consumer_secret, { :site => "https://#{company_alias}.goplanapp.com" } 
+  request_token = consumer.get_request_token
+  
+  puts "Please go to:\n#{request_token.authorize_url}\nin your browser to authorize your application."
+  puts "When done hit Return."
+  gets.chomp
+  
+  response = consumer.token_request(
+              consumer.http_method,
+              (consumer.access_token_url? ? consumer.access_token_url : consumer.access_token_path),
+              request_token, {})
+              
+  access_token = OAuth::AccessToken.new(consumer,response[:oauth_token],response[:oauth_token_secret])
+  
+  credentials = {
+    :consumer_key => consumer.key,
+    :consumer_secret => consumer.secret,
+    :access_token => access_token.token,
+    :access_token_secret => access_token.secret,
+    :company_alias => company_alias
+  }
+  
+  begin
+    File.open(File.join(File.dirname(__FILE__), '..', 'config', 'goplan.yml'), 'w') { |file| YAML.dump(credentials, file) }
+    File.chmod(0600, 'goplan.yml')
+    puts "Your credentials have been saved to config/goplan.yml."
+  rescue
+    puts "Couldn't save your credentials."
+  end
+  
+rescue => e
+  puts e
+  puts "Couldn't authorize with GoPlan. Did you enter your credentials correctly?"
+end

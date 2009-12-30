@@ -1,16 +1,11 @@
-This app is a small server to serve as a GitHub Post-Receive hook to close tickets 
-in GoPlan.
+This app is a small server to act as a GitHub Post-Receive hook to close tickets 
+in GoPlan projects.
+http://goplanapp.com/
 
-You need a goplan.yml file with your credentials. Looks like this:
+Hook will live at http://example.com/project_alias/github
 
---- 
-:company_alias:
-:consumer_key:
-:consumer_secret:
-:access_token:
-:access_token_secret:
-
-You can run goplan-auth to handle OAuth for you and create and populate this file.
+I took inspiration from Github's own awsome Post-Receive service
+http://github.com/pjhyett/github-services/
 
 This very simple hook looks for a pattern in commit messages:
 
@@ -22,14 +17,26 @@ Current behavior closes the referred ticket and adds a comment like so:
 		
 		http://github.com/defunkt/github/commit/41a212ee83ca127e3c8cf465891ab7216a705f59
 
+GoPlan API uses OAuth to handle authentication.
+Register an application with GoPlan to obtain consumer key and secret.
+http://goplanapp.com/oauth_clients/new
 
-This project also requires the following rubygems:
+Before deploying the app run goplan-auth to create a goplan.yml file with your credentials.
+
+Template for goplan.yml file is as follows:
+--- 
+:company_alias:
+:consumer_key:
+:consumer_secret:
+:access_token:
+:access_token_secret:
+
+It might look too much for just the given task, but I decided to take advantage of the
+modular structure of github-services in case I wanted to add more web hooks to 
+interact with other areas of GoPlan projects (Discussions, Tasks, Time Tracking),
+and handling different kinds of payloads from different services.
+
+You need:
 - sinatra
 - oauth
 - json
-
-
-TODO:
-- refactor code so doesn't look like a hack
-- cleanup, tests
-- make use of goplan gem (when available) to extend functionality
