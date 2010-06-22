@@ -5,6 +5,8 @@ service :goplan_status do |payload, project_alias|
   
   url = "/#{project_alias}/api/"
   
-  status_text = "Commit: [#{repository}] #{tiny_url}"
+  ticket = message.scan(%r{Closes #+[0-9]+})
+  
+  status_text = "[#{repository}] #{tiny_url} #{ticket}"
   @access_token.put("#{url}statuses/update", {:format => 'json', :text => status_text})
 end
