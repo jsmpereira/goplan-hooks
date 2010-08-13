@@ -5,8 +5,8 @@ service :github do |payload, project_alias|
 
   # Search for '[Closes #ticket_id]' and '[Relates to #ticket_id]' in commit message
   tickets = {}
-  tickets[:to_close] = message.scan(%r{Closes #+[0-9]+})}
-  tickets[:to_relate] = message.scan(%r{Relates to #+[0-9]+})}
+  tickets[:to_close] = message.scan(%r{Closes #+[0-9]+})
+  tickets[:to_relate] = message.scan(%r{Relates to #+[0-9]+})
   tickets[:gpp] = message.scan(%r{gpp +[a-z]+})
   
   # if GoPlan Project (gpp) name is supplied, use that; otherwise use default associated with repo
